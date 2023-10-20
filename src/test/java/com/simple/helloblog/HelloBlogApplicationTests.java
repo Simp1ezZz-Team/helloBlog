@@ -1,33 +1,26 @@
 package com.simple.helloblog;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import cn.dev33.satoken.secure.SaSecureUtil;
+import cn.hutool.core.lang.Assert;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.util.Assert;
 
 @SpringBootTest
 class HelloBlogApplicationTests {
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
 
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Data
-    static class TestClass {
-        private String name;
-        private Integer age;
-    }
+    @Value("${sa-token.salt}")
+    private String salt;
 
     @Test
-    void contextLoads() {
-        redisTemplate.opsForValue().set("test", new TestClass("test", 18));
-        Object test = redisTemplate.opsForValue().get("test");
-        Assert.notNull(test, "test is null");
-        Assert.isInstanceOf(TestClass.class, test, "test is not TestClass");
+    void testSha256() {
+        String pw1 = SaSecureUtil.sha256("zx199857");
+        String pw2 = SaSecureUtil.sha256("zx199857");
+        Assert.equals(pw1, pw2, "两次sha256加密结果不一致");
+        String pws1 = SaSecureUtil.sha256BySalt("zx199857", salt);
+        String pws2 = SaSecureUtil.sha256BySalt("zx199857", salt);
+        Assert.equals(pws1, pws2, "两次sha256BySalt加密结果不一致");
+        System.out.println(SaSecureUtil.sha256BySalt("zx199857", salt));
     }
 
 }
