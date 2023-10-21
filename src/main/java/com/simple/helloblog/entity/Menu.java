@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @author 魑魅魍魉
  * @date 2023/10/20 21:56:45
  */
-@Schema
+@Schema(description = "菜单表")
 @Data
 @TableName(value = "t_menu")
 public class Menu implements Serializable {
@@ -23,9 +23,9 @@ public class Menu implements Serializable {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "menu_id", type = IdType.AUTO)
     @Schema(description = "主键")
-    private Integer id;
+    private Integer menuId;
     /**
      * 父菜单id (paren_id为0且type为M则是一级菜单)
      */
@@ -71,15 +71,15 @@ public class Menu implements Serializable {
     /**
      * 是否隐藏 (0否 1是)
      */
-    @TableField(value = "is_hidden")
+    @TableField(value = "hidden_flag")
     @Schema(description = "是否隐藏 (0否 1是)")
-    private Integer isHidden;
+    private Integer hiddenFlag;
     /**
      * 是否禁用 (0否 1是)
      */
-    @TableField(value = "is_disable")
+    @TableField(value = "disable_flag")
     @Schema(description = "是否禁用 (0否 1是)")
-    private Integer isDisable;
+    private Integer disableFlag;
     /**
      * 排序
      */
@@ -110,4 +110,10 @@ public class Menu implements Serializable {
     @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
     @Schema(description = "更新者")
     private Integer updateBy;
+    /**
+     * 删除标志
+     */
+    @TableField(value = "del_flag")
+    @Schema(description = "删除标志")
+    private Integer delFlag;
 }

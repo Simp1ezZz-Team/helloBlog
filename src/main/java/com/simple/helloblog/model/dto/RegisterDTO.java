@@ -13,7 +13,7 @@ import lombok.Data;
  * @date 2023/10/21 00:28:09
  */
 @Data
-@Schema(name = "用户注册信息")
+@Schema(description = "用户注册DTO")
 public class RegisterDTO {
 
     /**

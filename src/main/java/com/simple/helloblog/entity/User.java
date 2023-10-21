@@ -2,8 +2,10 @@ package com.simple.helloblog.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,9 +17,11 @@ import java.time.LocalDateTime;
  * @author 魑魅魍魉
  * @date 2023/10/20 21:56:19
  */
-@Schema
+@Schema(description = "用户表")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName(value = "t_user")
 public class User implements Serializable {
     @Serial
@@ -25,9 +29,9 @@ public class User implements Serializable {
     /**
      * 用户id
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "user_id", type = IdType.AUTO)
     @Schema(description = "用户id")
-    private Integer id;
+    private Integer userId;
     /**
      * 用户昵称
      */
@@ -91,9 +95,9 @@ public class User implements Serializable {
     /**
      * 是否禁用 (0否 1是)
      */
-    @TableField(value = "is_disable")
+    @TableField(value = "disable_flag")
     @Schema(description = "是否禁用 (0否 1是)")
-    private Integer isDisable;
+    private Integer disableFlag;
     /**
      * 登录时间
      */
@@ -124,4 +128,10 @@ public class User implements Serializable {
     @TableField(value = "update_by", fill = FieldFill.INSERT_UPDATE)
     @Schema(description = "更新者")
     private Integer updateBy;
+    /**
+     * 删除标志
+     */
+    @TableField(value = "del_flag")
+    @Schema(description = "删除标志")
+    private Integer delFlag;
 }

@@ -18,13 +18,15 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        this.strictInsertFill(metaObject, "createBy", StpUtil::getLoginIdAsString, String.class); // 起始版本 3.3.3(推荐)
+        this.strictInsertFill(metaObject, "createBy", StpUtil::getLoginIdAsInt, Integer.class); // 起始版本 3.3.3(推荐)
         this.strictInsertFill(metaObject, "createTime", LocalDateTime::now, LocalDateTime.class); // 起始版本 3.3.3(推荐)
+        this.strictInsertFill(metaObject, "updateBy", StpUtil::getLoginIdAsInt, Integer.class); // 起始版本 3.3.3(推荐)
+        this.strictInsertFill(metaObject, "updateTime", LocalDateTime::now, LocalDateTime.class); // 起始版本 3.3.3(推荐)
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.strictUpdateFill(metaObject, "updateBy", StpUtil::getLoginIdAsString, String.class); // 起始版本 3.3.3(推荐)
+        this.strictUpdateFill(metaObject, "updateBy", StpUtil::getLoginIdAsInt, Integer.class); // 起始版本 3.3.3(推荐)
         this.strictUpdateFill(metaObject, "updateTime", LocalDateTime::now, LocalDateTime.class); // 起始版本 3.3.3(推荐)
     }
 }

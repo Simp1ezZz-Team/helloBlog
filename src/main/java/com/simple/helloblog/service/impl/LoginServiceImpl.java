@@ -34,15 +34,15 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String login(LoginDTO loginDTO) {
         User user = userService.getOne(Wrappers.<User>lambdaQuery()
-                .select(List.of(User::getId))
+//                .select(List.of(User::getId))
                 .eq(User::getUsername, loginDTO.getUsername())
                 .eq(User::getPassword, SaSecureUtil.sha256BySalt(loginDTO.getPassword(), salt)));
         Assert.notNull(user, "用户名或密码错误");
 
         // 校验指定账号是否已被封禁，如果被封禁则抛出异常 `DisableServiceException`
-        StpUtil.checkDisable(user.getId());
+        StpUtil.checkDisable(user.getUserId());
         // 通过校验后，再进行登录：
-        StpUtil.login(user.getId());
+        StpUtil.login(user.getUserId());
 
         return StpUtil.getTokenValue();
     }
@@ -55,7 +55,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public void register(RegisterDTO registerDTO) {
         User user = userService.getOne(Wrappers.<User>lambdaQuery()
-                .select(List.of(User::getId))
+                .select(List.of(User::getUserId))
                 .eq(User::getUsername, registerDTO.getUsername()));
         Assert.isNull(user, "该邮箱已注册过账号，请直接登录！");
         // 用户信息入库
@@ -64,10 +64,11 @@ public class LoginServiceImpl implements LoginService {
                 .password(SaSecureUtil.sha256BySalt(registerDTO.getPassword(), salt))
                 .nickname("用户" + IdWorker.getId())
                 .email(registerDTO.getUsername())
-                .isDisable(0)
+                .disableFlag(0)
                 .loginType(1)
                 .createBy(1)
                 .updateBy(1).build();
         userService.save(newUser);
+        //TODO 设置用户角色
     }
 }
