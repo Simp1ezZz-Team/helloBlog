@@ -2,6 +2,7 @@ package com.simple.helloblog.service;
 
 import com.github.yulichang.base.MPJBaseService;
 import com.simple.helloblog.entity.User;
+import com.simple.helloblog.model.vo.AdminUserVO;
 
 /**
  * 用户服务
@@ -10,4 +11,10 @@ import com.simple.helloblog.entity.User;
  * @date 2023/10/20 22:00:22
  */
 public interface UserService extends MPJBaseService<User> {
+    /**
+     * 获取当前登录的后台用户信息
+     *
+     * @return {@link AdminUserVO}
+     */
+    AdminUserVO getAdminUserInfo();
 }

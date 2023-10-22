@@ -50,4 +50,12 @@ public interface RoleService extends MPJBaseService<Role> {
      * @param roleDTO 角色 DTO
      */
     void updateRoleStatus(RoleDTO roleDTO);
+
+    /**
+     * 根据用户id查询用户所有角色id List
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link String}>
+     */
+    List<String> listRoleByUserId(Object userId);
 }

@@ -51,4 +51,12 @@ public interface MenuService extends MPJBaseService<Menu> {
      * @return {@link List}<{@link MenuTree}>
      */
     List<MenuTree> listMenuTree();
+
+    /**
+     * 根据角色id查询菜单权限码List
+     *
+     * @param roleId 角色标识
+     * @return {@link List}<{@link String}>
+     */
+    List<String> listPermissionByRoleId(String roleId);
 }

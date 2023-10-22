@@ -6,6 +6,8 @@ import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import com.github.yulichang.toolkit.MPJWrappers;
+import com.simple.helloblog.constant.CommonConstant;
 import com.simple.helloblog.entity.Role;
 import com.simple.helloblog.entity.UserRole;
 import com.simple.helloblog.mapper.RoleMapper;
@@ -75,7 +77,7 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
     @Override
     @Transactional
     public void deleteRole(List<Integer> roleIdList) {
-        Assert.isFalse(roleIdList.contains(1), "不允许删除超级管理员角色");
+        Assert.isFalse(roleIdList.contains(CommonConstant.ADMIN_ROLE_ID), "不允许删除超级管理员角色");
         // 角色是否已分配
         long count = userRoleService.count(Wrappers.<UserRole>lambdaQuery().in(UserRole::getRoleId, roleIdList));
         Assert.isFalse(count > 0, "角色已分配给人员，无法删除");
@@ -91,8 +93,8 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
      */
     @Override
     public void updateRole(RoleDTO roleDTO) {
-        Assert.isFalse(roleDTO.getRoleId().equals(1)
-                && roleDTO.getDisableFlag().equals(1), "不允许禁用超级管理员角色");
+        Assert.isFalse(roleDTO.getRoleId().equals(CommonConstant.ADMIN_ROLE_ID)
+                && roleDTO.getDisableFlag().equals(CommonConstant.TRUE), "不允许禁用超级管理员角色");
         // 角色id是否存在
         long countId = this.count(Wrappers.<Role>lambdaQuery().eq(Role::getRoleId, roleDTO.getRoleId()));
         Assert.isFalse(countId > 0, "要更新的角色不存在");
@@ -113,7 +115,7 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
     @Override
     public void updateRoleStatus(RoleDTO roleDTO) {
         Assert.isFalse(roleDTO.getRoleId().equals(1)
-                && roleDTO.getDisableFlag().equals(1), "不允许禁用超级管理员角色");
+                && roleDTO.getDisableFlag().equals(CommonConstant.ADMIN_ROLE_ID), "不允许禁用超级管理员角色");
         // 角色id是否存在
         long countId = this.count(Wrappers.<Role>lambdaQuery().eq(Role::getRoleId, roleDTO.getRoleId()));
         Assert.isFalse(countId > 0, "要更新的角色不存在");
@@ -122,5 +124,21 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
                 .roleId(roleDTO.getRoleId())
                 .disableFlag(roleDTO.getDisableFlag()).build();
         this.updateById(role);
+    }
+
+    /**
+     * 根据用户id查询用户所有角色id List
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link String}>
+     */
+    @Override
+    public List<String> listRoleByUserId(Object userId) {
+        List<RoleVO> roleVOS = this.selectJoinList(RoleVO.class, MPJWrappers.<Role>lambdaJoin()
+                .select(Role::getRoleId)
+                .innerJoin(UserRole.class, UserRole::getRoleId, Role::getRoleId)
+                .eq(Role::getDisableFlag, CommonConstant.FALSE)
+                .eq(UserRole::getUserId, userId));
+        return roleVOS.stream().map(roleVO -> roleVO.getRoleId().toString()).toList();
     }
 }

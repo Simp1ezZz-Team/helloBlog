@@ -5,7 +5,9 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.simple.helloblog.constant.CommonConstant;
 import com.simple.helloblog.entity.User;
+import com.simple.helloblog.enums.LoginTypeEnum;
 import com.simple.helloblog.model.dto.LoginDTO;
 import com.simple.helloblog.model.dto.RegisterDTO;
 import com.simple.helloblog.service.LoginService;
@@ -34,7 +36,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String login(LoginDTO loginDTO) {
         User user = userService.getOne(Wrappers.<User>lambdaQuery()
-//                .select(List.of(User::getId))
+                .select(List.of(User::getUserId))
                 .eq(User::getUsername, loginDTO.getUsername())
                 .eq(User::getPassword, SaSecureUtil.sha256BySalt(loginDTO.getPassword(), salt)));
         Assert.notNull(user, "用户名或密码错误");
@@ -62,12 +64,12 @@ public class LoginServiceImpl implements LoginService {
         User newUser = User.builder()
                 .username(registerDTO.getUsername())
                 .password(SaSecureUtil.sha256BySalt(registerDTO.getPassword(), salt))
-                .nickname("用户" + IdWorker.getId())
+                .nickname(CommonConstant.DEFAULT_USER_NICKNAME_PREFIX + IdWorker.getId())
                 .email(registerDTO.getUsername())
-                .disableFlag(0)
-                .loginType(1)
-                .createBy(1)
-                .updateBy(1).build();
+                .disableFlag(CommonConstant.FALSE)
+                .loginType(LoginTypeEnum.EMAIL.getType())
+                .createBy(CommonConstant.ADMIN_USER_ID)
+                .updateBy(CommonConstant.ADMIN_USER_ID).build();
         userService.save(newUser);
         //TODO 设置用户角色
     }

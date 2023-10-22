@@ -65,6 +65,13 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
+        <!-- kafka -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>3.0.12</version>
+        </dependency>
+
         <!-- mysql -->
         <dependency>
             <groupId>com.mysql</groupId>

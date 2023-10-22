@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.base.MPJBaseServiceImpl;
+import com.github.yulichang.toolkit.MPJWrappers;
+import com.simple.helloblog.constant.CommonConstant;
 import com.simple.helloblog.entity.Menu;
 import com.simple.helloblog.entity.RoleMenu;
 import com.simple.helloblog.mapper.MenuMapper;
@@ -19,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 菜单服务实现
@@ -112,8 +113,25 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
      */
     @Override
     public List<MenuTree> listMenuTree() {
-        List<Menu> menuList = this.list(Wrappers.<Menu>lambdaQuery().eq(Menu::getHiddenFlag, 0).orderByAsc(Menu::getOrderNum));
-        return recurMenuTreeList(0, BeanUtil.copyToList(menuList, MenuTree.class));
+        List<Menu> menuList = this.list(Wrappers.<Menu>lambdaQuery()
+                .eq(Menu::getHiddenFlag, CommonConstant.FALSE)
+                .orderByAsc(Menu::getOrderNum));
+        return recurMenuTreeList(CommonConstant.BASE_MENU_ID, BeanUtil.copyToList(menuList, MenuTree.class));
+    }
+
+    /**
+     * 根据角色id查询菜单权限码List
+     *
+     * @param roleId 角色标识
+     * @return {@link List}<{@link String}>
+     */
+    @Override
+    public List<String> listPermissionByRoleId(String roleId) {
+        return this.selectJoinList(String.class, MPJWrappers.<Menu>lambdaJoin()
+                .select(Menu::getPerms)
+                .innerJoin(RoleMenu.class, RoleMenu::getMenuId, Menu::getMenuId)
+                .eq(RoleMenu::getRoleId, roleId)
+                .eq(Menu::getDisableFlag, CommonConstant.FALSE));
     }
 
     /**
@@ -124,9 +142,9 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
      * @return {@link List}<{@link MenuTree}>
      */
     private List<MenuTree> recurMenuTreeList(Integer parentId, List<MenuTree> menuList) {
-        return menuList.stream()
-                .filter(menuTree-> menuTree.getParentId().equals(parentId))
-                .peek(menuTree -> menuTree.setChildren(recurMenuTreeList(menuTree.getMenuId(),menuList)))
-                .collect(Collectors.toList());
+        menuList.stream()
+                .filter(menuTree -> menuTree.getParentId().equals(parentId))
+                .forEach(menuTree -> menuTree.setChildren(recurMenuTreeList(menuTree.getMenuId(), menuList)));
+        return menuList;
     }
 }

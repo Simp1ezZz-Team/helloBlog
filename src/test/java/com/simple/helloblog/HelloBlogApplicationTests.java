@@ -6,14 +6,19 @@ import cn.hutool.core.lang.Assert;
 import com.simple.helloblog.entity.Role;
 import com.simple.helloblog.model.vo.RoleVO;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaTemplate;
 
 @SpringBootTest
 class HelloBlogApplicationTests {
 
     @Value("${sa-token.salt}")
     private String salt;
+
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
 
     @Test
     void testSha256() {
@@ -33,4 +38,8 @@ class HelloBlogApplicationTests {
         System.out.println(roleVO);
     }
 
+    @Test
+    void testKafka() {
+        kafkaTemplate.send("quickstart-events", "hello kafka");
+    }
 }

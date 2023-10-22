@@ -50,7 +50,9 @@ spring:
           max-idle: 100
           # 连接池中的最小空闲连接
           min-idle: 50
-
+  kafka:
+    bootstrap-servers:
+      - 172.19.253.181:9092
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
 sa-token:
   # 盐值
