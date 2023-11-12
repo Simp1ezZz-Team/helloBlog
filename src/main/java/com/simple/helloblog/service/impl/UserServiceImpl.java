@@ -6,11 +6,11 @@ import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.simple.helloblog.entity.User;
 import com.simple.helloblog.mapper.UserMapper;
 import com.simple.helloblog.model.vo.AdminUserVO;
+import com.simple.helloblog.model.vo.RouterVO;
 import com.simple.helloblog.service.UserService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 用户服务实现
@@ -40,5 +40,17 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
                 .nickname(user.getNickname())
                 .roleList(roleList)
                 .permissionList(permissionList).build();
+    }
+
+    /**
+     * 获取当前登录的后台用户的菜单信息
+     *
+     * @return {@link RouterVO}
+     */
+    @Override
+    public RouterVO getAdminUserMenu() {
+        int userId = StpUtil.getLoginIdAsInt();
+        this.selectJoinList()
+        return null;
     }
 }

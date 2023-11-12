@@ -3,6 +3,7 @@ package com.simple.helloblog.service;
 import com.github.yulichang.base.MPJBaseService;
 import com.simple.helloblog.entity.User;
 import com.simple.helloblog.model.vo.AdminUserVO;
+import com.simple.helloblog.model.vo.RouterVO;
 
 /**
  * 用户服务
@@ -17,4 +18,11 @@ public interface UserService extends MPJBaseService<User> {
      * @return {@link AdminUserVO}
      */
     AdminUserVO getAdminUserInfo();
+
+    /**
+     * 获取当前登录的后台用户的菜单信息
+     *
+     * @return {@link RouterVO}
+     */
+    RouterVO getAdminUserMenu();
 }
