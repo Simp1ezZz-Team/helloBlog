@@ -7,6 +7,7 @@ import com.simple.helloblog.model.vo.RouterVO;
 import com.simple.helloblog.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +44,7 @@ public class AdminUserController {
     @GetMapping("/menu")
     @Operation(summary = "获取当前登录的用户菜单")
     @SaCheckLogin
-    public Result<RouterVO> getAdminUserMenu() {
+    public Result<List<RouterVO>> getAdminUserMenu() {
         return Result.success(userService.getAdminUserMenu());
     }
 }

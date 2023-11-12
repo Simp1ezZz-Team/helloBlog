@@ -32,10 +32,4 @@ public class MetaVO {
      */
     @Schema(name = "是否隐藏")
     private Boolean hidden;
-
-    /**
-     * 是否固定在Tab栏
-     */
-    @Schema(name = "是否固定在Tab栏")
-    private Boolean affix;
 }

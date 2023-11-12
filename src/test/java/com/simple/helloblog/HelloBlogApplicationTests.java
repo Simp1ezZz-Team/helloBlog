@@ -28,7 +28,7 @@ class HelloBlogApplicationTests {
         String pws1 = SaSecureUtil.sha256BySalt("zx199857", salt);
         String pws2 = SaSecureUtil.sha256BySalt("zx199857", salt);
         Assert.equals(pws1, pws2, "两次sha256BySalt加密结果不一致");
-        System.out.println(SaSecureUtil.sha256BySalt("zx199857", salt));
+        System.out.println(SaSecureUtil.sha256BySalt("123456", salt));
     }
     @Test
     void testConvertBean() {

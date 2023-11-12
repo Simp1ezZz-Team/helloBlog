@@ -23,4 +23,6 @@ public class CommonConstant {
     public static final String SA_SESSION_ROLE_PREFIX = "role-";
 
     public static final String DEFAULT_USER_NICKNAME_PREFIX = "用户";
+
+    public static final String LAYOUT = "Layout";
 }

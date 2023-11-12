@@ -32,6 +32,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理Assert异常
+     * @param e e
+     * @return {@link Result}<{@link ?}>
+     */
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public Result<Object> handlerIllegalArgumentException(IllegalArgumentException e) {
+        return Result.fail(e.getMessage());
+    }
+
+    /**
      * 处理参数校验异常
      *
      * @param e e

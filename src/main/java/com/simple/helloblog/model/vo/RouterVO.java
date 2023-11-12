@@ -21,7 +21,7 @@ public class RouterVO {
     /**
      * 路由name
      */
-    @Schema(name = "路由name")
+    @Schema(name = "菜单名称")
     private String name;
 
     /**
@@ -40,7 +40,7 @@ public class RouterVO {
      * 路由元信息VO
      */
     @Schema(name = "路由元信息VO")
-    private MetaVO metaVO;
+    private MetaVO meta;
 
     /**
      * 子路由列表
