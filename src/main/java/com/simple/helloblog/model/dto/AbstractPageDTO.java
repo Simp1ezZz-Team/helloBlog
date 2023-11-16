@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @Schema(name = "抽象分页 DTO")
-public abstract class AbstractPageDTO<T> {
+public abstract class AbstractPageDTO {
 
     /**
      * 当前页码
@@ -26,7 +26,7 @@ public abstract class AbstractPageDTO<T> {
     @Schema(name = "分页大小", type = "long")
     private Long pageSize;
 
-    public Page<T> toPage() {
+    public <T>Page<T> toPage() {
         return new Page<>(pageNum, pageSize);
     }
 }

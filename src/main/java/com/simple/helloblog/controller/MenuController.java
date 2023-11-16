@@ -40,7 +40,7 @@ public class MenuController {
     @GetMapping("/list")
     @SaCheckPermission("system:menu:list")
     @Operation(summary = "查询菜单列表", description = "查询菜单列表")
-    public Result<PageResult<MenuVO>> listMenuVO(@RequestBody @Validated MenuDTO menuDTO) {
+    public Result<PageResult<MenuVO>> listMenuVO(@Validated MenuDTO menuDTO) {
         return Result.success(menuService.listMenuVO(menuDTO));
     }
 

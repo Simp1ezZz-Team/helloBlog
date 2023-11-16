@@ -1,6 +1,5 @@
 package com.simple.helloblog.model.dto;
 
-import com.simple.helloblog.entity.Role;
 import com.simple.helloblog.validator.group.InsertGroup;
 import com.simple.helloblog.validator.group.SelectGroup;
 import com.simple.helloblog.validator.group.UpdateGroup;
@@ -20,7 +19,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Schema(description = "角色DTO")
-public class RoleDTO extends AbstractPageDTO<Role> {
+public class RoleDTO extends AbstractPageDTO {
 
     @Schema(description = "角色id")
     @NotNull(message = "角色id不能为空", groups = {UpdateGroup.class})

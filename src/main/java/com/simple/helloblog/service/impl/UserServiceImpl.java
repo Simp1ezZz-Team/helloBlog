@@ -3,6 +3,7 @@ package com.simple.helloblog.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.toolkit.MPJWrappers;
 import com.simple.helloblog.constant.CommonConstant;
@@ -13,8 +14,11 @@ import com.simple.helloblog.entity.User;
 import com.simple.helloblog.entity.UserRole;
 import com.simple.helloblog.enums.MenuTypeEnum;
 import com.simple.helloblog.mapper.UserMapper;
+import com.simple.helloblog.model.dto.UserDTO;
+import com.simple.helloblog.model.vo.AdminUserDetailVO;
 import com.simple.helloblog.model.vo.AdminUserVO;
 import com.simple.helloblog.model.vo.MetaVO;
+import com.simple.helloblog.model.vo.PageResult;
 import com.simple.helloblog.model.vo.RouterVO;
 import com.simple.helloblog.model.vo.UserMenuVO;
 import com.simple.helloblog.service.MenuService;
@@ -40,17 +44,17 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
     /**
      * 获取当前登录的后台用户信息
      *
-     * @return {@link AdminUserVO}
+     * @return {@link AdminUserDetailVO}
      */
     @Override
-    public AdminUserVO getAdminUserInfo() {
+    public AdminUserDetailVO getAdminUserInfo() {
         Integer userId = StpUtil.getLoginIdAsInt();
         User user = this.getOne(Wrappers.<User>lambdaQuery()
             .select(List.of(User::getNickname, User::getAvatar))
             .eq(User::getUserId, userId));
         List<String> roleList = StpUtil.getRoleList(userId);
         List<String> permissionList = StpUtil.getPermissionList();
-        return AdminUserVO.builder()
+        return AdminUserDetailVO.builder()
             .userId(userId)
             .avatar(user.getAvatar())
             .nickname(user.getNickname())
@@ -79,6 +83,28 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
             .eq(Menu::getDisableFlag, CommonConstant.FALSE)
             .in(Menu::getMenuType, List.of(MenuTypeEnum.DIRECTORY.getType(), MenuTypeEnum.MENU.getType())));
         return recurRouter(CommonConstant.BASE_MENU_ID, userMenuVOList);
+    }
+
+    /**
+     * 用户列表
+     *
+     * @param userDTO 用户 dto
+     * @return {@link List}<{@link AdminUserVO}>
+     */
+    @Override
+    public PageResult<AdminUserVO> listAdminUserVO(UserDTO userDTO) {
+        Page<AdminUserVO> voPage = this.selectJoinListPage(userDTO.toPage(), AdminUserVO.class,
+            MPJWrappers.<User>lambdaJoin()
+                .select(User::getUserId, User::getNickname, User::getAvatar, User::getDisableFlag, User::getIpAddress,
+                    User::getIpSource, User::getLoginType, User::getLoginTime, User::getCreateTime)
+                .selectCollection(Role.class, AdminUserVO::getRoleList, map -> map
+                    .id(Role::getRoleId)
+                    .result(Role::getRoleName))
+                .leftJoin(UserRole.class, UserRole::getUserId, User::getUserId)
+                .leftJoin(Role.class, Role::getRoleId, UserRole::getRoleId)
+                .like(CharSequenceUtil.isNotBlank(userDTO.getNickname()), User::getNickname, userDTO.getNickname())
+                .eq(userDTO.getLoginType() != null, User::getLoginType, userDTO.getLoginType()));
+        return new PageResult<>(voPage);
     }
 
     /**

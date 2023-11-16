@@ -1,18 +1,21 @@
 package com.simple.helloblog.model.dto;
 
-import com.simple.helloblog.entity.Menu;
 import com.simple.helloblog.validator.group.InsertGroup;
 import com.simple.helloblog.validator.group.SelectGroup;
 import com.simple.helloblog.validator.group.UpdateGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Schema(description = "菜单DTO")
-public class MenuDTO extends AbstractPageDTO<Menu> {
+public class MenuDTO extends AbstractPageDTO {
 
     @Schema(description = "菜单id")
     @NotNull(message = "菜单id不能为空", groups = {UpdateGroup.class})

@@ -1,7 +1,10 @@
 package com.simple.helloblog.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import com.simple.helloblog.model.dto.UserDTO;
+import com.simple.helloblog.model.vo.AdminUserDetailVO;
 import com.simple.helloblog.model.vo.AdminUserVO;
+import com.simple.helloblog.model.vo.PageResult;
 import com.simple.helloblog.model.vo.Result;
 import com.simple.helloblog.model.vo.RouterVO;
 import com.simple.helloblog.service.UserService;
@@ -32,13 +35,26 @@ public class AdminUserController {
     /**
      * 获取当前登录的用户信息
      *
-     * @return {@link Result}<{@link AdminUserVO}>
+     * @return {@link Result}<{@link AdminUserDetailVO}>
      */
     @GetMapping("/info")
     @Operation(summary = "获取当前登录的用户信息")
     @SaCheckLogin
-    public Result<AdminUserVO> getAdminUserInfo() {
+    public Result<AdminUserDetailVO> getAdminUserInfo() {
         return Result.success(userService.getAdminUserInfo());
+    }
+
+    /**
+     * 获取用户列表
+     *
+     * @param userDTO 用户 dto
+     * @return {@link Result}<{@link List}<{@link AdminUserVO}>>
+     */
+    @GetMapping("/list")
+    @Operation(summary = "获取后台用户列表")
+//    @SaCheckPermission("user:list")
+    public Result<PageResult<AdminUserVO>> list(UserDTO userDTO) {
+        return Result.success(userService.listAdminUserVO(userDTO));
     }
 
     @GetMapping("/menu")

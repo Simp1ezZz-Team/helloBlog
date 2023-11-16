@@ -1,42 +1,51 @@
 package com.simple.helloblog.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Data;
 
+/**
+ * 后台用户VO
+ *
+ * @author 魑魅魍魉
+ * @date 2023/11/16 22:18:49
+ */
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Schema(name = "后台用户信息")
+@Schema(name = "后台用户VO")
 public class AdminUserVO {
-    /**
-     * 用户标识
-     */
-    @Schema(description = "用户标识")
+
+    @Schema(name = "用户id", type = "integer")
     private Integer userId;
-    /**
-     * 头像
-     */
-    @Schema(description = "头像")
-    private String avatar;
-    /**
-     * 昵称
-     */
-    @Schema(description = "昵称")
+
+    @Schema(name = "用户昵称")
     private String nickname;
-    /**
-     * 角色列表
-     */
-    @Schema(description = "角色列表")
-    private List<String> roleList;
-    /**
-     * 权限列表
-     */
-    @Schema(description = "权限列表")
-    private List<String> permissionList;
+
+    @Schema(name = "用户头像")
+    private String avatar;
+
+    @Schema(name = "登录ip")
+    private String ipAddress;
+
+    @Schema(name = "登录地址")
+    private String ipSource;
+
+    @Schema(name = "登录方式 (1邮箱 2QQ 3Gitee 4Github)", type = "integer")
+    private Integer loginType;
+
+    @Schema(name = "用户角色列表")
+    private List<UserRoleVO> roleList;
+
+    @Schema(name = "是否禁用 (0否 1是)", type = "integer")
+    private Integer disableFlag;
+
+    @Schema(name = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
+
+    @Schema(name = "最近登录时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime loginTime;
+
 }
