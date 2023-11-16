@@ -1,3 +1,4 @@
+drop database helloblog;
 create database helloblog default character set utf8mb4 collate utf8mb4_general_ci;
 use helloblog;
 create table t_menu
@@ -105,7 +106,7 @@ create table t_user
     charset = utf8mb4
     row_format = DYNAMIC;
 
-INSERT INTO helloblog.t_user (user_id, nickname, username, password, avatar, web_site, intro, email, ip_address, ip_source, login_type, disable_flag, login_time, create_by, create_time, update_by, update_time, del_flag) VALUES (1, '超级管理员', 'admin', '78700e4ec29576fbd7ad2a9b17a3034451f17454a453c39e00638754f0aac849', null, '', '', 'test@qq.com', '', '', 1, 0, null, 1, '2023-10-21 21:56:54', 1, '2023-11-12 23:02:53', 0);
+INSERT INTO helloblog.t_user (user_id, nickname, username, password, avatar, web_site, intro, email, ip_address, ip_source, login_type, disable_flag, login_time, create_by, create_time, update_by, update_time, del_flag) VALUES (1, '超级管理员', 'admin', '78700e4ec29576fbd7ad2a9b17a3034451f17454a453c39e00638754f0aac849', 'https://my-pic-picgo.oss-cn-shanghai.aliyuncs.com/avatar.webp', '', '', 'test@qq.com', '127.0.0.1', '安徽合肥', 1, 0, '2023-11-17 00:08:00', 1, '2023-10-21 21:56:54', 1, '2023-11-12 23:02:53', 0);
 
 create table t_user_role
 (
