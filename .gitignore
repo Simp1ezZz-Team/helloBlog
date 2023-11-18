@@ -30,3 +30,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### jrebel ###
+!/src/main/resources/rebel.xml
