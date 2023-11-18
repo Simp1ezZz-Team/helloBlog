@@ -16,19 +16,34 @@ import java.util.List;
  */
 public interface RoleService extends MPJBaseService<Role> {
     /**
-     * 添加角色
-     *
-     * @param roleDTO 角色 DTO
-     */
-    void addRole(RoleDTO roleDTO);
-
-    /**
      * 查询角色列表
      *
      * @param roleDTO 查询条件
      * @return {@link PageResult}<{@link RoleVO}>
      */
     PageResult<RoleVO> listRoleVO(RoleDTO roleDTO);
+
+    /**
+     * 查询全部角色列表
+     * @param roleDTO 查询参数
+     * @return {@link List}<{@link RoleVO}>
+     */
+    List<RoleVO> listAllRoleVO(RoleDTO roleDTO);
+
+    /**
+     * 根据用户id查询用户所有角色id List
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link String}>
+     */
+    List<String> listRoleByUserId(Object userId);
+
+    /**
+     * 添加角色
+     *
+     * @param roleDTO 角色 DTO
+     */
+    void addRole(RoleDTO roleDTO);
 
     /**
      * 删除角色
@@ -50,12 +65,4 @@ public interface RoleService extends MPJBaseService<Role> {
      * @param roleDTO 角色 DTO
      */
     void updateRoleStatus(RoleDTO roleDTO);
-
-    /**
-     * 根据用户id查询用户所有角色id List
-     *
-     * @param userId 用户id
-     * @return {@link List}<{@link String}>
-     */
-    List<String> listRoleByUserId(Object userId);
 }

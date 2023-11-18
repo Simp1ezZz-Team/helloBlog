@@ -1,6 +1,8 @@
 package com.simple.helloblog.handler;
 
+import cn.dev33.satoken.exception.DisableServiceException;
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
 import com.simple.helloblog.enums.StatusCodeEnum;
 import com.simple.helloblog.exception.ServiceException;
 import com.simple.helloblog.model.vo.Result;
@@ -61,5 +63,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = NotLoginException.class)
     public Result<Object> handlerNotLoginException(NotLoginException e) {
         return Result.fail(StatusCodeEnum.UNAUTHORIZED.getCode(), e.getMessage());
+    }
+
+    /**
+     * 处理账号封禁
+     */
+    @ExceptionHandler(value = DisableServiceException.class)
+    public Result<Object> handleDisableServiceExceptionException() {
+        return Result.fail("此账号已被禁止访问服务");
+    }
+
+    /**
+     * 处理权限不足
+     */
+    @ExceptionHandler(value = NotPermissionException.class)
+    public Result<Object> handleNotPermissionException() {
+        return Result.fail("权限不足");
     }
 }

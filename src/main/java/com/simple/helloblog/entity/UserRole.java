@@ -2,6 +2,7 @@ package com.simple.helloblog.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serial;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Schema(description = "用户角色关联表")
 @Data
 @TableName(value = "t_user_role")
+@Builder
 public class UserRole implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -37,7 +39,7 @@ public class UserRole implements Serializable {
      */
     @TableField(value = "role_id")
     @Schema(description = "角色id")
-    private String roleId;
+    private Integer roleId;
     /**
      * 创建时间
      */

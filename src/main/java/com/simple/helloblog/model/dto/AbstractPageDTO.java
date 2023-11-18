@@ -27,6 +27,9 @@ public abstract class AbstractPageDTO {
     private Long pageSize;
 
     public <T>Page<T> toPage() {
-        return new Page<>(pageNum, pageSize);
+        return toPage(true);
+    }
+    public <T>Page<T> toPage(Boolean needCount) {
+        return new Page<>(pageNum, pageSize,needCount);
     }
 }

@@ -90,7 +90,7 @@ public class User implements Serializable {
      * 登录方式 (1邮箱 2QQ 3Gitee 4Github)
      */
     @TableField(value = "login_type")
-    @Schema(description = "登录方式 (1邮箱 2QQ 3Gitee 4Github)")
+    @Schema(description = "登录方式 (0账号 1邮箱 2QQ 3Gitee 4Github)")
     private Integer loginType;
     /**
      * 是否禁用 (0否 1是)

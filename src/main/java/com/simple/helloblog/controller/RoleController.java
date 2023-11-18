@@ -41,8 +41,21 @@ public class RoleController {
     @GetMapping("/list")
     @SaCheckPermission("system:role:list")
     @Operation(summary = "查看角色列表", description = "查看角色列表")
-    public Result<PageResult<RoleVO>> listRoleVO(@RequestBody @Validated({SelectGroup.class}) RoleDTO roleDTO) {
+    public Result<PageResult<RoleVO>> listRoleVO(@Validated({SelectGroup.class}) RoleDTO roleDTO) {
         return Result.success(roleService.listRoleVO(roleDTO));
+    }
+
+    /**
+     * 查询角色列表全部
+     *
+     * @param roleDTO 查询参数
+     * @return {@link Result}<{@link PageResult}<{@link RoleVO}>>
+     */
+    @GetMapping("/list/all")
+    @SaCheckPermission("system:role:list")
+    @Operation(summary = "查看全部角色列表", description = "查看全部角色列表")
+    public Result<List<RoleVO>> listAllRoleVO(@Validated({SelectGroup.class}) RoleDTO roleDTO) {
+        return Result.success(roleService.listAllRoleVO(roleDTO));
     }
 
     /**

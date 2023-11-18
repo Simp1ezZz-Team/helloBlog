@@ -19,6 +19,9 @@ public class AdminUserVO {
     @Schema(name = "用户id", type = "integer")
     private Integer userId;
 
+    @Schema(name = "用户名")
+    private String username;
+
     @Schema(name = "用户昵称")
     private String nickname;
 
@@ -31,7 +34,7 @@ public class AdminUserVO {
     @Schema(name = "登录地址")
     private String ipSource;
 
-    @Schema(name = "登录方式 (1邮箱 2QQ 3Gitee 4Github)", type = "integer")
+    @Schema(name = "登录方式 (0账号 1邮箱 2QQ 3Gitee 4Github)", type = "integer")
     private Integer loginType;
 
     @Schema(name = "用户角色列表")

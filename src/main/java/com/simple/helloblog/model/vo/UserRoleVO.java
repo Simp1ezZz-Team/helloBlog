@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 @Schema(name = "用户角色VO")
 public class UserRoleVO {
+    @Schema(name = "用户id", type = "integer")
+    private Integer userId;
 
     @Schema(name = "角色id", type = "integer")
     private Integer roleId;

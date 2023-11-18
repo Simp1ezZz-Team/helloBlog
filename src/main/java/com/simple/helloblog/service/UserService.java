@@ -2,6 +2,7 @@ package com.simple.helloblog.service;
 
 import com.github.yulichang.base.MPJBaseService;
 import com.simple.helloblog.entity.User;
+import com.simple.helloblog.model.dto.DisableDTO;
 import com.simple.helloblog.model.dto.UserDTO;
 import com.simple.helloblog.model.vo.AdminUserDetailVO;
 import com.simple.helloblog.model.vo.AdminUserVO;
@@ -37,4 +38,30 @@ public interface UserService extends MPJBaseService<User> {
      * @return {@link List}<{@link AdminUserVO}>
      */
     PageResult<AdminUserVO> listAdminUserVO(UserDTO userDTO);
+
+    /**
+     * 修改用户禁用状态
+     * @param disableDTO {@link DisableDTO}
+     */
+    void updateStatus(DisableDTO disableDTO);
+
+    /**
+     * 更新用户
+     * @param userDTO {@link UserDTO}
+     */
+    void updateUser(UserDTO userDTO);
+
+    /**
+     * 添加用户
+     *
+     * @param userDTO 用户 dto
+     */
+    void addUser(UserDTO userDTO);
+
+    /**
+     * 按 ID 删除用户
+     *
+     * @param userId 用户 ID
+     */
+    void deleteUserById(Integer userId);
 }
