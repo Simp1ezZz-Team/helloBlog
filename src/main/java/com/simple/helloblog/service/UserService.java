@@ -64,4 +64,11 @@ public interface UserService extends MPJBaseService<User> {
      * @param userId 用户 ID
      */
     void deleteUserById(Integer userId);
+
+    /**
+     * 批量删除用户
+     *
+     * @param userIds 用户 ID
+     */
+    void batchDeleteUser(List<Integer> userIds);
 }

@@ -59,6 +59,8 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
 
     private final RoleService roleService;
 
+    private final UserMapper userMapper;
+
     @Value("${sa-token.salt}")
     private String salt;
 
@@ -223,8 +225,27 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
         this.removeById(userId);
         // 删除用户角色关联
         userRoleService.remove(Wrappers.lambdaUpdate(UserRole.class).eq(UserRole::getUserId, userId));
-        // 踢出用户
+        // 注销用户
         StpUtil.logout(userId);
+    }
+
+    /**
+     * 批量删除用户
+     *
+     * @param userIds 用户 ID
+     */
+    @Override
+    @Transactional
+    public void batchDeleteUser(List<Integer> userIds) {
+        if (userIds.contains(CommonConstant.ADMIN_USER_ID)) {
+            throw new ServiceException("不允许删除超级管理员");
+        }
+        // 删除用户
+        userMapper.deleteBatchIds(userIds);
+        // 删除用户角色关联
+        userRoleService.remove(Wrappers.<UserRole>lambdaUpdate().in(UserRole::getUserId, userIds));
+        // 注销用户
+        userIds.forEach(StpUtil::logout);
     }
 
     /**

@@ -134,4 +134,12 @@ public class AdminUserController {
         userService.deleteUserById(userId);
         return Result.success();
     }
+
+    @DeleteMapping("/batch")
+    @Operation(summary = "批量删除用户")
+//    @SaCheckPermission("system:user:delete")
+    public Result<Object> batchDeleteUser(@RequestBody List<Integer> userIds){
+        userService.batchDeleteUser(userIds);
+        return Result.success();
+    }
 }
