@@ -5,8 +5,6 @@ import com.simple.helloblog.entity.Menu;
 import com.simple.helloblog.model.dto.MenuDTO;
 import com.simple.helloblog.model.vo.MenuTree;
 import com.simple.helloblog.model.vo.MenuVO;
-import com.simple.helloblog.model.vo.PageResult;
-
 import java.util.List;
 
 /**
@@ -16,13 +14,14 @@ import java.util.List;
  * @date 2023/10/20 22:12:24
  */
 public interface MenuService extends MPJBaseService<Menu> {
+
     /**
      * 查询菜单列表
      *
      * @param menuDTO 查询条件
-     * @return {@link PageResult}<{@link MenuVO}>
+     * @return {@link List}<{@link MenuVO}>
      */
-    PageResult<MenuVO> listMenuVO(MenuDTO menuDTO);
+    List<MenuVO> listMenuVO(MenuDTO menuDTO);
 
     /**
      * 添加菜单
@@ -46,8 +45,8 @@ public interface MenuService extends MPJBaseService<Menu> {
     void deleteMenu(Integer menuId);
 
     /**
-     * 菜单树列表
-     * 可能有多个一级菜单所以以列表形式返回
+     * 菜单树列表 可能有多个一级菜单所以以列表形式返回
+     *
      * @return {@link List}<{@link MenuTree}>
      */
     List<MenuTree> listMenuTree();

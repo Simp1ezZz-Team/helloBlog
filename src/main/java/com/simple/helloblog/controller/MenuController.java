@@ -4,16 +4,21 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.simple.helloblog.model.dto.MenuDTO;
 import com.simple.helloblog.model.vo.MenuTree;
 import com.simple.helloblog.model.vo.MenuVO;
-import com.simple.helloblog.model.vo.PageResult;
 import com.simple.helloblog.model.vo.Result;
 import com.simple.helloblog.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 菜单控制器
@@ -26,6 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "菜单模块", description = "菜单模块相关接口")
 public class MenuController {
+
     /**
      * 菜单服务
      */
@@ -35,12 +41,12 @@ public class MenuController {
      * 查询菜单列表
      *
      * @param menuDTO 菜单 DTO
-     * @return {@link PageResult}<{@link MenuVO}>
+     * @return {@link Result}<{@link List}<{@link MenuVO}>>
      */
-    @GetMapping("/list")
+    @GetMapping("/list/all")
     @SaCheckPermission("system:menu:list")
     @Operation(summary = "查询菜单列表", description = "查询菜单列表")
-    public Result<PageResult<MenuVO>> listMenuVO(@Validated MenuDTO menuDTO) {
+    public Result<List<MenuVO>> listMenuVO(@Validated MenuDTO menuDTO) {
         return Result.success(menuService.listMenuVO(menuDTO));
     }
 

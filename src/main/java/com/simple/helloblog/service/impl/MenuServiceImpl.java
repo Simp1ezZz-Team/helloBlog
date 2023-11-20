@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.text.CharSequenceUtil;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.toolkit.MPJWrappers;
 import com.simple.helloblog.constant.CommonConstant;
@@ -14,13 +13,11 @@ import com.simple.helloblog.mapper.MenuMapper;
 import com.simple.helloblog.model.dto.MenuDTO;
 import com.simple.helloblog.model.vo.MenuTree;
 import com.simple.helloblog.model.vo.MenuVO;
-import com.simple.helloblog.model.vo.PageResult;
 import com.simple.helloblog.service.MenuService;
 import com.simple.helloblog.service.RoleMenuService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 菜单服务实现
@@ -42,17 +39,18 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
      * 查询菜单列表
      *
      * @param menuDTO 查询条件
-     * @return {@link PageResult}<{@link MenuVO}>
+     * @return {@link List}<{@link MenuVO}>
      */
     @Override
-    public PageResult<MenuVO> listMenuVO(MenuDTO menuDTO) {
-        Page<Menu> menuPage = this.page(menuDTO.toPage(), Wrappers.<Menu>lambdaQuery()
-                .eq(menuDTO.getMenuId() != null, Menu::getMenuId, menuDTO.getMenuId())
-                .like(CharSequenceUtil.isNotBlank(menuDTO.getMenuName()), Menu::getMenuName, menuDTO.getMenuName())
-                .eq(CharSequenceUtil.isNotBlank(menuDTO.getMenuType()), Menu::getMenuType, menuDTO.getMenuType())
-                .eq(menuDTO.getDisableFlag() != null, Menu::getDisableFlag, menuDTO.getDisableFlag())
-                .eq(menuDTO.getHiddenFlag() != null, Menu::getHiddenFlag, menuDTO.getHiddenFlag()));
-        return new PageResult<>(menuPage.convert(menu -> BeanUtil.copyProperties(menu, MenuVO.class)));
+    public List<MenuVO> listMenuVO(MenuDTO menuDTO) {
+        List<Menu> menuList = this.list(Wrappers.<Menu>lambdaQuery()
+            .eq(menuDTO.getMenuId() != null, Menu::getMenuId, menuDTO.getMenuId())
+            .like(CharSequenceUtil.isNotBlank(menuDTO.getMenuName()), Menu::getMenuName, menuDTO.getMenuName())
+            .eq(CharSequenceUtil.isNotBlank(menuDTO.getMenuType()), Menu::getMenuType, menuDTO.getMenuType())
+            .eq(menuDTO.getDisableFlag() != null, Menu::getDisableFlag, menuDTO.getDisableFlag())
+            .eq(menuDTO.getHiddenFlag() != null, Menu::getHiddenFlag, menuDTO.getHiddenFlag()));
+
+        return BeanUtil.copyToList(menuList, MenuVO.class);
     }
 
     /**
@@ -64,7 +62,7 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
     public void addMenu(MenuDTO menuDTO) {
         // 菜单名是否已存在
         long countMenuName = this.count(Wrappers.<Menu>lambdaQuery()
-                .eq(Menu::getMenuName, menuDTO.getMenuName()));
+            .eq(Menu::getMenuName, menuDTO.getMenuName()));
         Assert.isFalse(countMenuName > 0, "{}菜单名已存在", menuDTO.getMenuName());
 
         Menu menu = BeanUtil.copyProperties(menuDTO, Menu.class);
@@ -106,16 +104,15 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
     }
 
     /**
-     * 菜单树列表
-     * 可能有多个一级菜单所以以列表形式返回
+     * 菜单树列表 可能有多个一级菜单所以以列表形式返回
      *
      * @return {@link List}<{@link MenuTree}>
      */
     @Override
     public List<MenuTree> listMenuTree() {
         List<Menu> menuList = this.list(Wrappers.<Menu>lambdaQuery()
-                .eq(Menu::getHiddenFlag, CommonConstant.FALSE)
-                .orderByAsc(Menu::getOrderNum));
+            .eq(Menu::getHiddenFlag, CommonConstant.FALSE)
+            .orderByAsc(Menu::getOrderNum));
         return recurMenuTreeList(CommonConstant.BASE_MENU_ID, BeanUtil.copyToList(menuList, MenuTree.class));
     }
 
@@ -128,10 +125,10 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
     @Override
     public List<String> listPermissionByRoleId(String roleId) {
         return this.selectJoinList(String.class, MPJWrappers.<Menu>lambdaJoin()
-                .select(Menu::getPerms)
-                .innerJoin(RoleMenu.class, RoleMenu::getMenuId, Menu::getMenuId)
-                .eq(RoleMenu::getRoleId, roleId)
-                .eq(Menu::getDisableFlag, CommonConstant.FALSE));
+            .select(Menu::getPerms)
+            .innerJoin(RoleMenu.class, RoleMenu::getMenuId, Menu::getMenuId)
+            .eq(RoleMenu::getRoleId, roleId)
+            .eq(Menu::getDisableFlag, CommonConstant.FALSE));
     }
 
     /**
@@ -143,8 +140,8 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
      */
     private List<MenuTree> recurMenuTreeList(Integer parentId, List<MenuTree> menuList) {
         menuList.stream()
-                .filter(menuTree -> menuTree.getParentId().equals(parentId))
-                .forEach(menuTree -> menuTree.setChildren(recurMenuTreeList(menuTree.getMenuId(), menuList)));
+            .filter(menuTree -> menuTree.getParentId().equals(parentId))
+            .forEach(menuTree -> menuTree.setChildren(recurMenuTreeList(menuTree.getMenuId(), menuList)));
         return menuList;
     }
 }
