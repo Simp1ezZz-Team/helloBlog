@@ -6,6 +6,7 @@ import com.simple.helloblog.model.vo.MenuTree;
 import com.simple.helloblog.model.vo.MenuVO;
 import com.simple.helloblog.model.vo.Result;
 import com.simple.helloblog.service.MenuService;
+import com.simple.helloblog.validator.group.SelectGroup;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -43,10 +44,10 @@ public class MenuController {
      * @param menuDTO 菜单 DTO
      * @return {@link Result}<{@link List}<{@link MenuVO}>>
      */
-    @GetMapping("/list/all")
-    @SaCheckPermission("system:menu:list")
+    @GetMapping("/list")
+//    @SaCheckPermission("system:menu:list")
     @Operation(summary = "查询菜单列表", description = "查询菜单列表")
-    public Result<List<MenuVO>> listMenuVO(@Validated MenuDTO menuDTO) {
+    public Result<List<MenuVO>> listMenuVO(@Validated(SelectGroup.class) MenuDTO menuDTO) {
         return Result.success(menuService.listMenuVO(menuDTO));
     }
 

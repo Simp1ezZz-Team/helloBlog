@@ -2,6 +2,7 @@ package com.simple.helloblog.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -64,5 +65,6 @@ public class MenuVO {
     private LocalDateTime updateTime;
 
     @Schema(name = "子菜单")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<MenuVO> children;
 }
