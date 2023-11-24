@@ -2,6 +2,7 @@ package com.simple.helloblog.service;
 
 import com.github.yulichang.base.MPJBaseService;
 import com.simple.helloblog.entity.Role;
+import com.simple.helloblog.model.dto.DisableDTO;
 import com.simple.helloblog.model.dto.RoleDTO;
 import com.simple.helloblog.model.vo.PageResult;
 import com.simple.helloblog.model.vo.RoleVO;
@@ -50,7 +51,7 @@ public interface RoleService extends MPJBaseService<Role> {
      *
      * @param roleIdList 角色 ID 列表
      */
-    void deleteRole(List<Integer> roleIdList);
+    void batchDeleteRole(List<Integer> roleIdList);
 
     /**
      * 更新角色
@@ -62,7 +63,15 @@ public interface RoleService extends MPJBaseService<Role> {
     /**
      * 更新角色状态
      *
-     * @param roleDTO 角色 DTO
+     * @param disableDTO 禁用 DTO
      */
-    void updateRoleStatus(RoleDTO roleDTO);
+    void updateRoleStatus(DisableDTO disableDTO);
+
+    /**
+     * 按 ID 获取角色
+     *
+     * @param roleId 角色 ID
+     * @return {@link RoleVO}
+     */
+    RoleVO getRoleById(Integer roleId);
 }

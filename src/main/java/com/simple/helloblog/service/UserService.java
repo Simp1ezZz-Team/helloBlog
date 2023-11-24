@@ -43,7 +43,7 @@ public interface UserService extends MPJBaseService<User> {
      * 修改用户禁用状态
      * @param disableDTO {@link DisableDTO}
      */
-    void updateStatus(DisableDTO disableDTO);
+    void updateUserStatus(DisableDTO disableDTO);
 
     /**
      * 更新用户
@@ -57,13 +57,6 @@ public interface UserService extends MPJBaseService<User> {
      * @param userDTO 用户 dto
      */
     void addUser(UserDTO userDTO);
-
-    /**
-     * 按 ID 删除用户
-     *
-     * @param userId 用户 ID
-     */
-    void deleteUserById(Integer userId);
 
     /**
      * 批量删除用户

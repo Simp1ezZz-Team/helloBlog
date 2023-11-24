@@ -4,11 +4,14 @@ import com.simple.helloblog.validator.group.InsertGroup;
 import com.simple.helloblog.validator.group.SelectGroup;
 import com.simple.helloblog.validator.group.UpdateGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.List;
 
 /**
  * 角色 DTO
@@ -27,14 +30,14 @@ public class RoleDTO extends AbstractPageDTO {
     private Integer roleId;
 
     @Schema(description = "角色名")
-    @NotBlank(message = "角色名不能为空", groups = {InsertGroup.class, UpdateGroup.class})
+    @NotBlank(message = "角色名不能为空", groups = {InsertGroup.class})
     private String roleName;
 
     @Schema(description = "角色描述")
+    @NotBlank(message = "角色描述不能为空", groups = {InsertGroup.class})
     private String roleDesc;
 
     @Schema(description = "是否禁用 (0否 1是)")
-    @NotNull(message = "角色状态不能为空", groups = {InsertGroup.class, UpdateGroup.class})
     @Max(value = 1, groups = {InsertGroup.class, UpdateGroup.class, SelectGroup.class}, message = "角色状态只能为0或1")
     @Min(value = 0, groups = {InsertGroup.class, UpdateGroup.class, SelectGroup.class}, message = "角色状态只能为0或1")
     private Integer disableFlag;

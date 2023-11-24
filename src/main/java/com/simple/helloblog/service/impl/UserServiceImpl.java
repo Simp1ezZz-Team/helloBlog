@@ -145,7 +145,7 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
      * @param disableDTO {@link DisableDTO}
      */
     @Override
-    public void updateStatus(DisableDTO disableDTO) {
+    public void updateUserStatus(DisableDTO disableDTO) {
         if (CommonConstant.ADMIN_USER_ID.equals(disableDTO.getId())) {
             throw new ServiceException("不允许禁用超级管理员");
         }
@@ -208,25 +208,6 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
             .userId(user.getUserId())
             .roleId(roleId).build()).toList();
         userRoleService.saveBatch(userRoleList);
-    }
-
-    /**
-     * 按 ID 删除用户
-     *
-     * @param userId 用户 ID
-     */
-    @Override
-    @Transactional
-    public void deleteUserById(Integer userId) {
-        if (CommonConstant.ADMIN_USER_ID.equals(userId)) {
-            throw new ServiceException("不允许删除超级管理员");
-        }
-        // 删除用户
-        this.removeById(userId);
-        // 删除用户角色关联
-        userRoleService.remove(Wrappers.lambdaUpdate(UserRole.class).eq(UserRole::getUserId, userId));
-        // 注销用户
-        StpUtil.logout(userId);
     }
 
     /**

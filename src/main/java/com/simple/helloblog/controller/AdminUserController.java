@@ -54,6 +54,12 @@ public class AdminUserController {
         return Result.success(userService.getAdminUserInfo());
     }
 
+    /**
+     * 按 ID 获取用户信息
+     *
+     * @param userId 用户 ID
+     * @return {@link Result}<{@link AdminUserVO}>
+     */
     @GetMapping("/{userId}")
     @Operation(summary = "根据用户id获取用户信息")
 //    @SaCheckPermission("system:user:detail")
@@ -96,7 +102,7 @@ public class AdminUserController {
     @Operation(summary = "修改用户状态")
 //    @SaCheckPermission("system:user:update")
     public Result<Object> updateStatus(@Validated @RequestBody DisableDTO disableDTO) {
-        userService.updateStatus(disableDTO);
+        userService.updateUserStatus(disableDTO);
         return Result.success();
     }
 
@@ -131,21 +137,13 @@ public class AdminUserController {
     /**
      * 删除用户
      *
-     * @param userId 用户 ID
+     * @param userIds 用户 ID
      * @return {@link Result}<{@link Object}>
      */
-    @DeleteMapping("/{userId}")
+    @DeleteMapping
     @Operation(summary = "删除用户")
 //    @SaCheckPermission("system:user:delete")
-    public Result<Object> deleteUser(@PathVariable Integer userId){
-        userService.deleteUserById(userId);
-        return Result.success();
-    }
-
-    @DeleteMapping("/batch")
-    @Operation(summary = "批量删除用户")
-//    @SaCheckPermission("system:user:delete")
-    public Result<Object> batchDeleteUser(@RequestBody List<Integer> userIds){
+    public Result<Object> deleteUser(@RequestBody List<Integer> userIds){
         userService.batchDeleteUser(userIds);
         return Result.success();
     }

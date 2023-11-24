@@ -11,6 +11,7 @@ import com.simple.helloblog.constant.CommonConstant;
 import com.simple.helloblog.entity.Role;
 import com.simple.helloblog.entity.UserRole;
 import com.simple.helloblog.mapper.RoleMapper;
+import com.simple.helloblog.model.dto.DisableDTO;
 import com.simple.helloblog.model.dto.RoleDTO;
 import com.simple.helloblog.model.vo.PageResult;
 import com.simple.helloblog.model.vo.RoleVO;
@@ -92,7 +93,7 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
      */
     @Override
     @Transactional
-    public void deleteRole(List<Integer> roleIdList) {
+    public void batchDeleteRole(List<Integer> roleIdList) {
         Assert.isFalse(roleIdList.contains(CommonConstant.ADMIN_ROLE_ID), "不允许删除超级管理员角色");
         // 角色是否已分配
         long count = userRoleService.count(Wrappers.<UserRole>lambdaQuery().in(UserRole::getRoleId, roleIdList));
@@ -109,13 +110,14 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
      */
     @Override
     public void updateRole(RoleDTO roleDTO) {
-        Assert.isFalse(roleDTO.getRoleId().equals(CommonConstant.ADMIN_ROLE_ID)
-            && roleDTO.getDisableFlag().equals(CommonConstant.TRUE), "不允许禁用超级管理员角色");
+        Assert.isFalse(CommonConstant.ADMIN_ROLE_ID.equals(roleDTO.getRoleId())
+            && CommonConstant.TRUE.equals(roleDTO.getDisableFlag()), "不允许禁用超级管理员角色");
         // 角色id是否存在
         long countId = this.count(Wrappers.<Role>lambdaQuery().eq(Role::getRoleId, roleDTO.getRoleId()));
-        Assert.isFalse(countId > 0, "要更新的角色不存在");
+        Assert.isTrue(countId > 0, "要更新的角色不存在");
         // 角色名是否存在
-        long countRoleName = this.count(Wrappers.<Role>lambdaQuery().eq(Role::getRoleName, roleDTO.getRoleName()));
+        long countRoleName = this.count(Wrappers.<Role>lambdaQuery().ne(Role::getRoleId, roleDTO.getRoleId())
+            .eq(Role::getRoleName, roleDTO.getRoleName()));
         Assert.isFalse(countRoleName > 0, "{}角色名已存在", roleDTO.getRoleName());
 
         Role role = BeanUtil.copyProperties(roleDTO, Role.class);
@@ -126,20 +128,32 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
     /**
      * 更新角色状态
      *
-     * @param roleDTO 角色 DTO
+     * @param disableDTO 禁用 DTO
      */
     @Override
-    public void updateRoleStatus(RoleDTO roleDTO) {
-        Assert.isFalse(roleDTO.getRoleId().equals(1)
-            && roleDTO.getDisableFlag().equals(CommonConstant.ADMIN_ROLE_ID), "不允许禁用超级管理员角色");
+    public void updateRoleStatus(DisableDTO disableDTO) {
+        Assert.isFalse(CommonConstant.ADMIN_ROLE_ID.equals(disableDTO.getId())
+            && CommonConstant.TRUE.equals(disableDTO.getDisableFlag()), "不允许禁用超级管理员角色");
         // 角色id是否存在
-        long countId = this.count(Wrappers.<Role>lambdaQuery().eq(Role::getRoleId, roleDTO.getRoleId()));
-        Assert.isFalse(countId > 0, "要更新的角色不存在");
+        long countId = this.count(Wrappers.<Role>lambdaQuery().eq(Role::getRoleId, disableDTO.getId()));
+        Assert.isTrue(countId > 0, "要更新的角色不存在");
 
         Role role = Role.builder()
-            .roleId(roleDTO.getRoleId())
-            .disableFlag(roleDTO.getDisableFlag()).build();
+            .roleId(disableDTO.getId())
+            .disableFlag(disableDTO.getDisableFlag()).build();
         this.updateById(role);
+    }
+
+    /**
+     * 按 ID 获取角色
+     *
+     * @param roleId 角色 ID
+     * @return {@link RoleVO}
+     */
+    @Override
+    public RoleVO getRoleById(Integer roleId) {
+        Role role = this.getById(roleId);
+        return BeanUtil.copyProperties(role, RoleVO.class);
     }
 
     /**
