@@ -3,6 +3,7 @@ package com.simple.helloblog.service;
 import com.github.yulichang.base.MPJBaseService;
 import com.simple.helloblog.entity.Menu;
 import com.simple.helloblog.model.dto.MenuDTO;
+import com.simple.helloblog.model.vo.MenuOption;
 import com.simple.helloblog.model.vo.MenuTree;
 import com.simple.helloblog.model.vo.MenuVO;
 import java.util.List;
@@ -58,4 +59,19 @@ public interface MenuService extends MPJBaseService<Menu> {
      * @return {@link List}<{@link String}>
      */
     List<String> listPermissionByRoleId(String roleId);
+
+    /**
+     * 列表菜单选项
+     *
+     * @return {@link List}<{@link MenuOption}>
+     */
+    List<MenuOption> listMenuOptions();
+
+    /**
+     * 按 ID 获取菜单
+     *
+     * @param menuId 菜单 ID
+     * @return {@link MenuVO}
+     */
+    MenuVO getMenuById(Integer menuId);
 }

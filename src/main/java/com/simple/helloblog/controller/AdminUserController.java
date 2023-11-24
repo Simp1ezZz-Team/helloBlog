@@ -54,6 +54,13 @@ public class AdminUserController {
         return Result.success(userService.getAdminUserInfo());
     }
 
+    @GetMapping("/{userId}")
+    @Operation(summary = "根据用户id获取用户信息")
+//    @SaCheckPermission("system:user:detail")
+    public Result<AdminUserVO> getAdminUserById(@PathVariable Integer userId){
+        return Result.success(userService.getAdminUserById(userId));
+    }
+
     /**
      * 获取用户列表
      *

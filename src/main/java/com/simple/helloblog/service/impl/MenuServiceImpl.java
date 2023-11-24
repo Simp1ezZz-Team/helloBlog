@@ -1,16 +1,18 @@
 package com.simple.helloblog.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.text.CharSequenceUtil;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.toolkit.MPJWrappers;
 import com.simple.helloblog.constant.CommonConstant;
 import com.simple.helloblog.entity.Menu;
 import com.simple.helloblog.entity.RoleMenu;
+import com.simple.helloblog.enums.MenuTypeEnum;
 import com.simple.helloblog.mapper.MenuMapper;
 import com.simple.helloblog.model.dto.MenuDTO;
+import com.simple.helloblog.model.vo.MenuOption;
 import com.simple.helloblog.model.vo.MenuTree;
 import com.simple.helloblog.model.vo.MenuVO;
 import com.simple.helloblog.service.MenuService;
@@ -92,7 +94,8 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
         long countId = this.count(Wrappers.<Menu>lambdaQuery().eq(Menu::getMenuId, menuDTO.getMenuId()));
         Assert.isTrue(countId > 0, "{}菜单不存在", menuDTO.getMenuId());
         // 菜单名是否已存在
-        long countMenuName = this.count(Wrappers.<Menu>lambdaQuery().eq(Menu::getMenuName, menuDTO.getMenuName()));
+        long countMenuName = this.count(Wrappers.<Menu>lambdaQuery().ne(Menu::getMenuId, menuDTO.getMenuId())
+            .eq(Menu::getMenuName, menuDTO.getMenuName()));
         Assert.isFalse(countMenuName > 0, "{}菜单名已存在", menuDTO.getMenuName());
 
         Menu menu = BeanUtil.copyProperties(menuDTO, Menu.class);
@@ -144,6 +147,34 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
     }
 
     /**
+     * 列表菜单选项
+     *
+     * @return {@link List}<{@link MenuOption}>
+     */
+    @Override
+    public List<MenuOption> listMenuOptions() {
+        List<MenuOption> menuOptions = this.selectJoinList(MenuOption.class, MPJWrappers.<Menu>lambdaJoin()
+            .selectAs(Menu::getMenuId, "value")
+            .selectAs(Menu::getMenuName, "label")
+            .select(Menu::getParentId)
+            .eq(Menu::getDisableFlag, CommonConstant.FALSE)
+            .in(Menu::getMenuType, MenuTypeEnum.DIRECTORY.getType(), MenuTypeEnum.MENU.getType())
+            .orderByAsc(Menu::getOrderNum));
+        return recurMenuOptionList(CommonConstant.BASE_MENU_ID, menuOptions);
+    }
+
+    /**
+     * 按 ID 获取菜单
+     *
+     * @param menuId 菜单 ID
+     * @return {@link MenuVO}
+     */
+    @Override
+    public MenuVO getMenuById(Integer menuId) {
+        return BeanUtil.copyProperties(this.getById(menuId), MenuVO.class);
+    }
+
+    /**
      * 递归组合菜单树
      *
      * @param parentId 父菜单id
@@ -168,6 +199,20 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
         return menuVOList.stream()
             .filter(menuVO -> menuVO.getParentId().equals(parentId))
             .peek(menuVO -> menuVO.setChildren(recurMenuVOList(menuVO.getMenuId(), menuVOList)))
+            .toList();
+    }
+
+    /**
+     * 递归生成菜单选项列表
+     *
+     * @param parentId 父菜单id
+     * @param menuOptionList 菜单选项列表
+     * @return {@link List}<{@link MenuOption}>
+     */
+    private List<MenuOption> recurMenuOptionList(Integer parentId, List<MenuOption> menuOptionList) {
+        return menuOptionList.stream()
+            .filter(menuOption -> menuOption.getParentId().equals(parentId))
+            .peek(menuOption -> menuOption.setChildren(recurMenuOptionList(menuOption.getValue(), menuOptionList)))
             .toList();
     }
 }

@@ -71,4 +71,12 @@ public interface UserService extends MPJBaseService<User> {
      * @param userIds 用户 ID
      */
     void batchDeleteUser(List<Integer> userIds);
+
+    /**
+     * 按 ID 获取用户信息
+     *
+     * @param userId 用户 ID
+     * @return {@link AdminUserVO}
+     */
+    AdminUserVO getAdminUserById(Integer userId);
 }

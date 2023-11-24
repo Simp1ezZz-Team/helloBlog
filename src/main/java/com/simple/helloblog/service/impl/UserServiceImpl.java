@@ -249,6 +249,24 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
     }
 
     /**
+     * 按 ID 获取用户信息
+     *
+     * @param userId 用户 ID
+     * @return {@link AdminUserVO}
+     */
+    @Override
+    public AdminUserVO getAdminUserById(Integer userId) {
+        return this.selectJoinOne(AdminUserVO.class, MPJWrappers.<User>lambdaJoin()
+            .selectAll(User.class)
+            .selectCollection(Role.class, AdminUserVO::getRoleList,
+                map -> map.id(Role::getRoleId).result(Role::getRoleName))
+            .leftJoin(UserRole.class, UserRole::getUserId, User::getUserId)
+            .leftJoin(Role.class, Role::getRoleId, UserRole::getRoleId)
+            .eq(User::getUserId, userId)
+            .eq(Role::getDisableFlag, CommonConstant.FALSE));
+    }
+
+    /**
      * 递归获取路由
      *
      * @param parentId 父菜单id
