@@ -2,6 +2,7 @@ package com.simple.helloblog.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serial;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
  */
 @Schema(description = "角色菜单关联表")
 @Data
+@Builder
 @TableName(value = "t_role_menu")
 public class RoleMenu implements Serializable {
     @Serial

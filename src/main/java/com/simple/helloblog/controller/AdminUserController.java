@@ -62,7 +62,7 @@ public class AdminUserController {
      */
     @GetMapping("/{userId}")
     @Operation(summary = "根据用户id获取用户信息")
-//    @SaCheckPermission("system:user:detail")
+    @SaCheckPermission("system:user:detail")
     public Result<AdminUserVO> getAdminUserById(@PathVariable Integer userId){
         return Result.success(userService.getAdminUserById(userId));
     }
@@ -100,7 +100,7 @@ public class AdminUserController {
      */
     @PatchMapping("status")
     @Operation(summary = "修改用户状态")
-//    @SaCheckPermission("system:user:update")
+    @SaCheckPermission("system:user:update")
     public Result<Object> updateStatus(@Validated @RequestBody DisableDTO disableDTO) {
         userService.updateUserStatus(disableDTO);
         return Result.success();
@@ -114,7 +114,7 @@ public class AdminUserController {
      */
     @PatchMapping
     @Operation(summary = "修改用户信息")
-//    @SaCheckPermission("system:user:update")
+    @SaCheckPermission("system:user:update")
     public Result<Object> updateUser(@Validated(UpdateGroup.class) @RequestBody UserDTO userDTO) {
         userService.updateUser(userDTO);
         return Result.success();
@@ -128,7 +128,7 @@ public class AdminUserController {
      */
     @PostMapping
     @Operation(summary = "添加用户")
-//    @SaCheckPermission("system:user:add")
+    @SaCheckPermission("system:user:add")
     public Result<Object> addUser(@Validated @RequestBody UserDTO userDTO) {
         userService.addUser(userDTO);
         return Result.success();
@@ -142,7 +142,7 @@ public class AdminUserController {
      */
     @DeleteMapping
     @Operation(summary = "删除用户")
-//    @SaCheckPermission("system:user:delete")
+    @SaCheckPermission("system:user:delete")
     public Result<Object> deleteUser(@RequestBody List<Integer> userIds){
         userService.batchDeleteUser(userIds);
         return Result.success();

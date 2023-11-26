@@ -74,4 +74,12 @@ public interface RoleService extends MPJBaseService<Role> {
      * @return {@link RoleVO}
      */
     RoleVO getRoleById(Integer roleId);
+
+    /**
+     * 获取角色菜单 ID 列表
+     *
+     * @param roleId 角色 ID
+     * @return {@link List}<{@link Integer}>
+     */
+    List<Integer> getRoleMenuIdList(Integer roleId);
 }

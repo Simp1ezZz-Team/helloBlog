@@ -1,4 +1,4 @@
-package com.simple.helloblog.model.vo;
+package com.simple.helloblog.model.vo.tree;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Schema(description = "菜单 VO")
-public class MenuVO {
+public class MenuVO implements Tree<MenuVO> {
 
     @Schema(name = "菜单id", type = "integer")
     private Integer menuId;
@@ -37,10 +37,10 @@ public class MenuVO {
     @Schema(name = "权限标识")
     private String perms;
 
-    @Schema(name="是否隐藏（0否 1是）", type = "integer")
+    @Schema(name = "是否隐藏（0否 1是）", type = "integer")
     private Integer hiddenFlag;
 
-    @Schema(name="是否禁用（0否 1是）", type = "integer")
+    @Schema(name = "是否禁用（0否 1是）", type = "integer")
     private Integer disableFlag;
 
     @Schema(name = "菜单排序", type = "integer")
@@ -67,4 +67,34 @@ public class MenuVO {
     @Schema(name = "子菜单")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<MenuVO> children;
+
+    /**
+     * 获取id
+     *
+     * @return id
+     */
+    @Override
+    public Integer getTreeId() {
+        return this.menuId;
+    }
+
+    /**
+     * 获取父id
+     *
+     * @return 父id
+     */
+    @Override
+    public Integer getParentTreeId() {
+        return this.parentId;
+    }
+
+    /**
+     * 设置子节点
+     *
+     * @param childrenTree 子节点
+     */
+    @Override
+    public void setChildrenTree(List<MenuVO> childrenTree) {
+        this.children = childrenTree;
+    }
 }

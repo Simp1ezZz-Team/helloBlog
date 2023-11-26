@@ -12,9 +12,10 @@ import com.simple.helloblog.entity.RoleMenu;
 import com.simple.helloblog.enums.MenuTypeEnum;
 import com.simple.helloblog.mapper.MenuMapper;
 import com.simple.helloblog.model.dto.MenuDTO;
-import com.simple.helloblog.model.vo.MenuOption;
-import com.simple.helloblog.model.vo.MenuTree;
-import com.simple.helloblog.model.vo.MenuVO;
+import com.simple.helloblog.model.vo.tree.MenuOption;
+import com.simple.helloblog.model.vo.tree.MenuTree;
+import com.simple.helloblog.model.vo.tree.MenuVO;
+import com.simple.helloblog.model.vo.tree.Tree;
 import com.simple.helloblog.service.MenuService;
 import com.simple.helloblog.service.RoleMenuService;
 import java.util.ArrayList;
@@ -54,13 +55,14 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
             .like(CharSequenceUtil.isNotBlank(menuDTO.getMenuName()), Menu::getMenuName, menuDTO.getMenuName())
             .eq(CharSequenceUtil.isNotBlank(menuDTO.getMenuType()), Menu::getMenuType, menuDTO.getMenuType())
             .eq(menuDTO.getDisableFlag() != null, Menu::getDisableFlag, menuDTO.getDisableFlag())
-            .eq(menuDTO.getHiddenFlag() != null, Menu::getHiddenFlag, menuDTO.getHiddenFlag()));
+            .eq(menuDTO.getHiddenFlag() != null, Menu::getHiddenFlag, menuDTO.getHiddenFlag())
+            .orderByAsc(Menu::getOrderNum));
         List<MenuVO> menuVOList = BeanUtil.copyToList(menuList, MenuVO.class);
         Set<Integer> menuIds = menuVOList.stream().map(MenuVO::getMenuId).collect(Collectors.toSet());
         menuVOList.forEach(menuVO -> {
             // 如果parentId不在当前菜单id列表，说明为父级菜单id，根据此id作为递归的开始条件节点
             if (!menuIds.contains(menuVO.getParentId())) {
-                menuVO.setChildren(recurMenuVOList(menuVO.getMenuId(), menuVOList));
+                menuVO.setChildren(recurTreeList(menuVO.getMenuId(), menuVOList));
                 result.add(menuVO);
             }
         });
@@ -126,9 +128,8 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
     @Override
     public List<MenuTree> listMenuTree() {
         List<Menu> menuList = this.list(Wrappers.<Menu>lambdaQuery()
-            .eq(Menu::getHiddenFlag, CommonConstant.FALSE)
             .orderByAsc(Menu::getOrderNum));
-        return recurMenuTreeList(CommonConstant.BASE_MENU_ID, BeanUtil.copyToList(menuList, MenuTree.class));
+        return recurTreeList(CommonConstant.BASE_MENU_ID, BeanUtil.copyToList(menuList, MenuTree.class));
     }
 
     /**
@@ -160,7 +161,7 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
             .eq(Menu::getDisableFlag, CommonConstant.FALSE)
             .in(Menu::getMenuType, MenuTypeEnum.DIRECTORY.getType(), MenuTypeEnum.MENU.getType())
             .orderByAsc(Menu::getOrderNum));
-        return recurMenuOptionList(CommonConstant.BASE_MENU_ID, menuOptions);
+        return recurTreeList(CommonConstant.BASE_MENU_ID, menuOptions);
     }
 
     /**
@@ -178,41 +179,16 @@ public class MenuServiceImpl extends MPJBaseServiceImpl<MenuMapper, Menu> implem
      * 递归组合菜单树
      *
      * @param parentId 父菜单id
-     * @param menuList 菜单列表
-     * @return {@link List}<{@link MenuTree}>
+     * @param treeList 树列表
+     * @return {@link List}<{@link Tree}<{@link T}>>
      */
-    private List<MenuTree> recurMenuTreeList(Integer parentId, List<MenuTree> menuList) {
-        menuList.stream()
-            .filter(menuTree -> menuTree.getParentId().equals(parentId))
-            .forEach(menuTree -> menuTree.setChildren(recurMenuTreeList(menuTree.getMenuId(), menuList)));
-        return menuList;
-    }
-
-    /**
-     * 递归生成菜单列表
-     *
-     * @param parentId 父菜单id
-     * @param menuVOList 菜单列表
-     * @return {@link List}<{@link MenuVO}>
-     */
-    private List<MenuVO> recurMenuVOList(Integer parentId, List<MenuVO> menuVOList) {
-        return menuVOList.stream()
-            .filter(menuVO -> menuVO.getParentId().equals(parentId))
-            .peek(menuVO -> menuVO.setChildren(recurMenuVOList(menuVO.getMenuId(), menuVOList)))
-            .toList();
-    }
-
-    /**
-     * 递归生成菜单选项列表
-     *
-     * @param parentId 父菜单id
-     * @param menuOptionList 菜单选项列表
-     * @return {@link List}<{@link MenuOption}>
-     */
-    private List<MenuOption> recurMenuOptionList(Integer parentId, List<MenuOption> menuOptionList) {
-        return menuOptionList.stream()
-            .filter(menuOption -> menuOption.getParentId().equals(parentId))
-            .peek(menuOption -> menuOption.setChildren(recurMenuOptionList(menuOption.getValue(), menuOptionList)))
+    private <T extends Tree<T>> List<T> recurTreeList(Integer parentId, List<T> treeList) {
+        return treeList.stream()
+            .filter(tree -> tree.getParentTreeId().equals(parentId))
+            .map(tree -> {
+                tree.setChildrenTree(recurTreeList(tree.getTreeId(), treeList));
+                return tree;
+            })
             .toList();
     }
 }

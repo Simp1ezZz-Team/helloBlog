@@ -94,8 +94,9 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
     public List<RouterVO> getAdminUserMenu() {
         int userId = StpUtil.getLoginIdAsInt();
         List<UserMenuVO> userMenuVOList = menuService.selectJoinList(UserMenuVO.class, MPJWrappers.<Menu>lambdaJoin()
+            .distinct()
             .select(Menu::getMenuId, Menu::getParentId, Menu::getMenuName, Menu::getMenuType, Menu::getPath,
-                Menu::getIcon, Menu::getComponent, Menu::getHiddenFlag)
+                Menu::getIcon, Menu::getComponent, Menu::getHiddenFlag, Menu::getOrderNum)
             .innerJoin(RoleMenu.class, RoleMenu::getMenuId, Menu::getMenuId)
             .innerJoin(UserRole.class, UserRole::getRoleId, RoleMenu::getRoleId)
             .innerJoin(User.class, User::getUserId, UserRole::getUserId)
@@ -104,7 +105,8 @@ public class UserServiceImpl extends MPJBaseServiceImpl<UserMapper, User> implem
             .eq(Role::getDisableFlag, CommonConstant.FALSE)
             .eq(User::getDisableFlag, CommonConstant.FALSE)
             .eq(Menu::getDisableFlag, CommonConstant.FALSE)
-            .in(Menu::getMenuType, List.of(MenuTypeEnum.DIRECTORY.getType(), MenuTypeEnum.MENU.getType())));
+            .in(Menu::getMenuType, List.of(MenuTypeEnum.DIRECTORY.getType(), MenuTypeEnum.MENU.getType()))
+            .orderByAsc(Menu::getOrderNum));
         return recurRouter(CommonConstant.BASE_MENU_ID, userMenuVOList);
     }
 

@@ -9,12 +9,14 @@ import com.github.yulichang.base.MPJBaseServiceImpl;
 import com.github.yulichang.toolkit.MPJWrappers;
 import com.simple.helloblog.constant.CommonConstant;
 import com.simple.helloblog.entity.Role;
+import com.simple.helloblog.entity.RoleMenu;
 import com.simple.helloblog.entity.UserRole;
 import com.simple.helloblog.mapper.RoleMapper;
 import com.simple.helloblog.model.dto.DisableDTO;
 import com.simple.helloblog.model.dto.RoleDTO;
 import com.simple.helloblog.model.vo.PageResult;
 import com.simple.helloblog.model.vo.RoleVO;
+import com.simple.helloblog.service.RoleMenuService;
 import com.simple.helloblog.service.RoleService;
 import com.simple.helloblog.service.UserRoleService;
 import java.util.List;
@@ -35,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implements RoleService {
 
     private final UserRoleService userRoleService;
+
+    private final RoleMenuService roleMenuService;
 
     private final RoleMapper roleMapper;
 
@@ -74,6 +78,7 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
      * @param roleDTO 角色 DTO
      */
     @Override
+    @Transactional
     public void addRole(RoleDTO roleDTO) {
         // 角色名是否已存在
         Role existRole = this.getOne(Wrappers.<Role>lambdaQuery()
@@ -81,9 +86,15 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
             .eq(Role::getRoleName, roleDTO.getRoleName()));
         Assert.isNull(existRole, "{}角色名已存在", roleDTO.getRoleName());
 
+        // 保存角色
         Role role = BeanUtil.copyProperties(roleDTO, Role.class);
         this.save(role);
-        //TODO 插入roleMenu
+
+        //添加菜单权限
+        List<RoleMenu> roleMenuList = roleDTO.getMenuIdList().stream().map(menuId -> RoleMenu.builder()
+            .roleId(role.getRoleId())
+            .menuId(menuId).build()).toList();
+        roleMenuService.saveBatch(roleMenuList);
     }
 
     /**
@@ -98,9 +109,10 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
         // 角色是否已分配
         long count = userRoleService.count(Wrappers.<UserRole>lambdaQuery().in(UserRole::getRoleId, roleIdList));
         Assert.isFalse(count > 0, "角色已分配给人员，无法删除");
-
+        // 删除角色
         roleMapper.deleteBatchIds(roleIdList);
-        //TODO 删除角色菜单关联
+        // 删除角色菜单关联
+        roleMenuService.remove(Wrappers.<RoleMenu>lambdaQuery().in(RoleMenu::getRoleId, roleIdList));
     }
 
     /**
@@ -109,6 +121,7 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
      * @param roleDTO 角色 DTO
      */
     @Override
+    @Transactional
     public void updateRole(RoleDTO roleDTO) {
         Assert.isFalse(CommonConstant.ADMIN_ROLE_ID.equals(roleDTO.getRoleId())
             && CommonConstant.TRUE.equals(roleDTO.getDisableFlag()), "不允许禁用超级管理员角色");
@@ -119,10 +132,17 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
         long countRoleName = this.count(Wrappers.<Role>lambdaQuery().ne(Role::getRoleId, roleDTO.getRoleId())
             .eq(Role::getRoleName, roleDTO.getRoleName()));
         Assert.isFalse(countRoleName > 0, "{}角色名已存在", roleDTO.getRoleName());
-
+        // 更新角色
         Role role = BeanUtil.copyProperties(roleDTO, Role.class);
         this.updateById(role);
-        //TODO 更新角色菜单关联
+        // 更新角色菜单关联
+        // 先删除全部关联关系
+        roleMenuService.remove(Wrappers.<RoleMenu>lambdaQuery().eq(RoleMenu::getRoleId, roleDTO.getRoleId()));
+        // 再插入更新后的关联关系
+        List<RoleMenu> roleMenuList = roleDTO.getMenuIdList().stream().map(menuId -> RoleMenu.builder()
+            .roleId(roleDTO.getRoleId())
+            .menuId(menuId).build()).toList();
+        roleMenuService.saveBatch(roleMenuList);
     }
 
     /**
@@ -137,7 +157,7 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
         // 角色id是否存在
         long countId = this.count(Wrappers.<Role>lambdaQuery().eq(Role::getRoleId, disableDTO.getId()));
         Assert.isTrue(countId > 0, "要更新的角色不存在");
-
+        // 更新角色状态
         Role role = Role.builder()
             .roleId(disableDTO.getId())
             .disableFlag(disableDTO.getDisableFlag()).build();
@@ -157,6 +177,19 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
     }
 
     /**
+     * 获取角色菜单 ID 列表
+     *
+     * @param roleId 角色 ID
+     * @return {@link List}<{@link Integer}>
+     */
+    @Override
+    public List<Integer> getRoleMenuIdList(Integer roleId) {
+        return roleMenuService.selectJoinList(Integer.class, MPJWrappers.<RoleMenu>lambdaJoin()
+            .select(RoleMenu::getMenuId)
+            .eq(RoleMenu::getRoleId, roleId));
+    }
+
+    /**
      * 根据用户id查询用户所有角色id List
      *
      * @param userId 用户id
@@ -171,6 +204,4 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
             .eq(UserRole::getUserId, userId));
         return roleVOS.stream().map(roleVO -> roleVO.getRoleId().toString()).toList();
     }
-
-
 }

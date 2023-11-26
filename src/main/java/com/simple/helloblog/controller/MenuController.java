@@ -1,9 +1,10 @@
 package com.simple.helloblog.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.simple.helloblog.model.dto.MenuDTO;
-import com.simple.helloblog.model.vo.MenuOption;
-import com.simple.helloblog.model.vo.MenuTree;
-import com.simple.helloblog.model.vo.MenuVO;
+import com.simple.helloblog.model.vo.tree.MenuOption;
+import com.simple.helloblog.model.vo.tree.MenuTree;
+import com.simple.helloblog.model.vo.tree.MenuVO;
 import com.simple.helloblog.model.vo.Result;
 import com.simple.helloblog.service.MenuService;
 import com.simple.helloblog.validator.group.SelectGroup;
@@ -45,7 +46,7 @@ public class MenuController {
      * @return {@link Result}<{@link MenuVO}>
      */
     @GetMapping("/{menuId}")
-//    @SaCheckPermission("system:menu:detail")
+    @SaCheckPermission("system:menu:detail")
     @Operation(summary = "根据菜单id获取菜单信息")
     public Result<MenuVO> getMenuById(@PathVariable Integer menuId){
         return Result.success(menuService.getMenuById(menuId));
@@ -58,14 +59,14 @@ public class MenuController {
      * @return {@link Result}<{@link List}<{@link MenuVO}>>
      */
     @GetMapping("/list")
-//    @SaCheckPermission("system:menu:list")
+    @SaCheckPermission("system:menu:list")
     @Operation(summary = "查询菜单列表", description = "查询菜单列表")
     public Result<List<MenuVO>> listMenuVO(@Validated(SelectGroup.class) MenuDTO menuDTO) {
         return Result.success(menuService.listMenuVO(menuDTO));
     }
 
     @GetMapping("/list/options")
-//    @SaCheckPermission("system:menu:list")
+    @SaCheckPermission("system:menu:list")
     @Operation(summary = "查询菜单选项列表", description = "查询菜单选项列表")
     public Result<List<MenuOption>> listMenuOptions(){
         return Result.success(menuService.listMenuOptions());
@@ -78,7 +79,7 @@ public class MenuController {
      * @return {@link Result}<{@link ?}>
      */
     @PostMapping
-//    @SaCheckPermission("system:menu:add")
+    @SaCheckPermission("system:menu:add")
     @Operation(summary = "添加菜单", description = "添加菜单")
     public Result<Object> addMenu(@RequestBody @Validated MenuDTO menuDTO) {
         menuService.addMenu(menuDTO);
@@ -92,7 +93,7 @@ public class MenuController {
      * @return {@link Result}<{@link ?}>
      */
     @PatchMapping
-//    @SaCheckPermission("system:menu:update")
+    @SaCheckPermission("system:menu:update")
     @Operation(summary = "更新菜单", description = "更新菜单")
     public Result<Object> updateMenu(@RequestBody @Validated MenuDTO menuDTO) {
         menuService.updateMenu(menuDTO);
@@ -106,7 +107,7 @@ public class MenuController {
      * @return {@link Result}<{@link ?}>
      */
     @DeleteMapping("/{menuId}")
-//    @SaCheckPermission("system:menu:delete")
+    @SaCheckPermission("system:menu:delete")
     @Operation(summary = "删除菜单", description = "删除菜单")
     public Result<Object> deleteMenu(@PathVariable("menuId") Integer menuId) {
         menuService.deleteMenu(menuId);
@@ -119,7 +120,7 @@ public class MenuController {
      * @return {@link Result}<{@link List}<{@link MenuTree}>>
      */
     @GetMapping("/tree")
-//    @SaCheckPermission("system:menu:tree")
+    @SaCheckPermission("system:menu:list")
     @Operation(summary = "获取菜单树", description = "获取菜单树")
     public Result<List<MenuTree>> listMenuTree() {
         return Result.success(menuService.listMenuTree());

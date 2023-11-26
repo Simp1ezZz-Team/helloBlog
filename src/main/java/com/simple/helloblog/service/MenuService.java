@@ -3,9 +3,9 @@ package com.simple.helloblog.service;
 import com.github.yulichang.base.MPJBaseService;
 import com.simple.helloblog.entity.Menu;
 import com.simple.helloblog.model.dto.MenuDTO;
-import com.simple.helloblog.model.vo.MenuOption;
-import com.simple.helloblog.model.vo.MenuTree;
-import com.simple.helloblog.model.vo.MenuVO;
+import com.simple.helloblog.model.vo.tree.MenuOption;
+import com.simple.helloblog.model.vo.tree.MenuTree;
+import com.simple.helloblog.model.vo.tree.MenuVO;
 import java.util.List;
 
 /**

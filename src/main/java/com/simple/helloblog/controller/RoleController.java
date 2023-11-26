@@ -1,5 +1,6 @@
 package com.simple.helloblog.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.simple.helloblog.model.dto.DisableDTO;
 import com.simple.helloblog.model.dto.RoleDTO;
 import com.simple.helloblog.model.vo.PageResult;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "角色模块", description = "角色模块相关接口")
 public class RoleController {
+
     /**
      * 角色服务
      */
@@ -45,7 +47,7 @@ public class RoleController {
      * @return {@link Result}<{@link PageResult}<{@link RoleVO}>>
      */
     @GetMapping("/list")
-//    @SaCheckPermission("system:role:list")
+    @SaCheckPermission("system:role:list")
     @Operation(summary = "查看角色列表", description = "查看角色列表")
     public Result<PageResult<RoleVO>> listRoleVO(@Validated({SelectGroup.class}) RoleDTO roleDTO) {
         return Result.success(roleService.listRoleVO(roleDTO));
@@ -58,10 +60,23 @@ public class RoleController {
      * @return {@link Result}<{@link RoleVO}>
      */
     @GetMapping("/{roleId}")
-//    @SaCheckPermission("system:role:detail")
+    @SaCheckPermission("system:role:detail")
     @Operation(summary = "查看角色详情", description = "查看角色详情")
-    public Result<RoleVO> getRoleById(@PathVariable Integer roleId){
+    public Result<RoleVO> getRoleById(@PathVariable Integer roleId) {
         return Result.success(roleService.getRoleById(roleId));
+    }
+
+    /**
+     * 获取角色菜单 ID 列表
+     *
+     * @param roleId 角色 ID
+     * @return {@link Result}<{@link List}<{@link Integer}>>
+     */
+    @GetMapping("/menu/{roleId}")
+    @SaCheckPermission("system:role:detail")
+    @Operation(summary = "获取角色菜单 ID 列表", description = "获取角色菜单 ID 列表")
+    public Result<List<Integer>> getRoleMenuIdList(@PathVariable Integer roleId) {
+        return Result.success(roleService.getRoleMenuIdList(roleId));
     }
 
     /**
@@ -71,7 +86,7 @@ public class RoleController {
      * @return {@link Result}<{@link PageResult}<{@link RoleVO}>>
      */
     @GetMapping("/list/all")
-//    @SaCheckPermission("system:role:list")
+    @SaCheckPermission("system:role:list")
     @Operation(summary = "查看全部角色列表", description = "查看全部角色列表")
     public Result<List<RoleVO>> listAllRoleVO(@Validated({SelectGroup.class}) RoleDTO roleDTO) {
         return Result.success(roleService.listAllRoleVO(roleDTO));
@@ -84,7 +99,7 @@ public class RoleController {
      * @return {@link Result}
      */
     @PostMapping
-//    @SaCheckPermission("system:role:add")
+    @SaCheckPermission("system:role:add")
     @Operation(summary = "添加角色", description = "添加角色")
     public Result<Object> addRole(@RequestBody @Validated({InsertGroup.class}) RoleDTO roleDTO) {
         roleService.addRole(roleDTO);
@@ -98,7 +113,7 @@ public class RoleController {
      * @return {@link Result}<{@link ?}>
      */
     @DeleteMapping
-//    @SaCheckPermission("system:role:delete")
+    @SaCheckPermission("system:role:delete")
     @Operation(summary = "删除角色", description = "删除角色")
     public Result<Object> deleteRole(@RequestBody List<Integer> roleIdList) {
         roleService.batchDeleteRole(roleIdList);
@@ -112,7 +127,7 @@ public class RoleController {
      * @return {@link Result}<{@link ?}>
      */
     @PatchMapping
-//    @SaCheckPermission("system:role:update")
+    @SaCheckPermission("system:role:update")
     @Operation(summary = "修改角色", description = "修改角色")
     public Result<Object> updateRole(@RequestBody @Validated RoleDTO roleDTO) {
         roleService.updateRole(roleDTO);
@@ -126,8 +141,8 @@ public class RoleController {
      * @return {@link Result}<{@link ?}>
      */
     @PatchMapping("/status")
-//    @SaCheckPermission("system:role:update")
-    @Operation(summary = "更新角色状态",description = "更新角色状态")
+    @SaCheckPermission("system:role:update")
+    @Operation(summary = "更新角色状态", description = "更新角色状态")
     public Result<Object> updateRoleStatus(@RequestBody @Validated DisableDTO disableDTO) {
         roleService.updateRoleStatus(disableDTO);
         return Result.success();

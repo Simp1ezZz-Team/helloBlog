@@ -34,7 +34,6 @@ public class RoleDTO extends AbstractPageDTO {
     private String roleName;
 
     @Schema(description = "角色描述")
-    @NotBlank(message = "角色描述不能为空", groups = {InsertGroup.class})
     private String roleDesc;
 
     @Schema(description = "是否禁用 (0否 1是)")
