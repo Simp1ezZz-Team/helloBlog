@@ -1,5 +1,7 @@
 package com.simple.helloblog.service.impl;
 
+import cn.dev33.satoken.session.SaSession;
+import cn.dev33.satoken.session.SaSessionCustomUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.text.CharSequenceUtil;
@@ -20,6 +22,7 @@ import com.simple.helloblog.service.RoleMenuService;
 import com.simple.helloblog.service.RoleService;
 import com.simple.helloblog.service.UserRoleService;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -113,6 +116,12 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
         roleMapper.deleteBatchIds(roleIdList);
         // 删除角色菜单关联
         roleMenuService.remove(Wrappers.<RoleMenu>lambdaQuery().in(RoleMenu::getRoleId, roleIdList));
+        // 删除redis缓存中的角色信息
+        roleIdList.forEach(roleId -> {
+            SaSession saSession = SaSessionCustomUtil.getSessionById(CommonConstant.SA_SESSION_ROLE_PREFIX + roleId,
+                false);
+            Optional.ofNullable(saSession).ifPresent(session -> session.delete(SaSession.PERMISSION_LIST));
+        });
     }
 
     /**
@@ -143,6 +152,11 @@ public class RoleServiceImpl extends MPJBaseServiceImpl<RoleMapper, Role> implem
             .roleId(roleDTO.getRoleId())
             .menuId(menuId).build()).toList();
         roleMenuService.saveBatch(roleMenuList);
+        // 删除redis缓存中的角色信息
+        SaSession saSession = SaSessionCustomUtil.getSessionById(
+            CommonConstant.SA_SESSION_ROLE_PREFIX + roleDTO.getRoleId(),
+            false);
+        Optional.ofNullable(saSession).ifPresent(session -> session.delete(SaSession.PERMISSION_LIST));
     }
 
     /**
