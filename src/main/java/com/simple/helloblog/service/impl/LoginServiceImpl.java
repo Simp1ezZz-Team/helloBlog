@@ -45,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
         StpUtil.checkDisable(user.getUserId());
         // 通过校验后，再进行登录：
         StpUtil.login(user.getUserId());
-
+        StpUtil.getSession().set(CommonConstant.USERNAME,loginDTO.getUsername());
         return StpUtil.getTokenValue();
     }
 

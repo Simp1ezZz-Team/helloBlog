@@ -26,4 +26,5 @@ public class CommonConstant {
 
     public static final String LAYOUT = "Layout";
     public static final String DEFAULT_USER_AVATAR = "https://my-pic-picgo.oss-cn-shanghai.aliyuncs.com/avatar.webp";
+    public static final String USERNAME = "username";
 }

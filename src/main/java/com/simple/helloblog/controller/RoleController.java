@@ -1,6 +1,7 @@
 package com.simple.helloblog.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.simple.helloblog.annotation.OptLogger;
 import com.simple.helloblog.model.dto.DisableDTO;
 import com.simple.helloblog.model.dto.RoleDTO;
 import com.simple.helloblog.model.vo.PageResult;
@@ -101,6 +102,7 @@ public class RoleController {
     @PostMapping
     @SaCheckPermission("system:role:add")
     @Operation(summary = "添加角色", description = "添加角色")
+    @OptLogger("ADD")
     public Result<Object> addRole(@RequestBody @Validated({InsertGroup.class}) RoleDTO roleDTO) {
         roleService.addRole(roleDTO);
         return Result.success();
